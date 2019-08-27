@@ -22,9 +22,10 @@ class Hello extends React.Component {
     };
     this.setName = this.setName.bind(this);
   }
-  setName(username) {
+  setName(user) {
+    console.log(user);
     this.setState({
-      username: username.user.username
+      username: user.user.username
     });
   }
 
@@ -33,23 +34,32 @@ class Hello extends React.Component {
     const token = urlParams.get("token");
 
     let that = this;
-    fetch(`http://localhost:3001/user?token=${token}`)
-      .then(function(response) {
+    fetch(`http://localhost:3001/user/:id?token=${token}`)
+      .then(function (response) {
         if (response.status !== 200) {
           console.log("Hay un error " + response.status);
           return;
         }
-        response.json().then(function(data) {
+        response.json().then(function (data) {
           that.setName(data);
         });
       })
-      .catch(function(err) {
+      .catch(function (err) {
         console.log("Fetch Error :-S", err);
       });
   }
 
+
+  // async loadBooks() {
+  //   const req = await fetch("http://localhost:3001/books");
+  //   const data = await req.json();
+
+  //   this.props.getBooks(data);
+  // }
+
   componentWillMount() {
     this.getData();
+    // this.loadBooks();
   }
 
   render() {

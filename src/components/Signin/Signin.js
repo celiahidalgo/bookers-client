@@ -20,38 +20,74 @@ const styles = () => ({
 class Signin extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: "" };
-    this.handleChange = this.handleChange.bind(this);
+    this.state = { email: "", password: "" };
+    this.emailChange = this.emailChange.bind(this);
+    this.passwordChange = this.passwordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+  setUsers(users) {
+    console.log(users);
+    this.setState({
+      users: [users.user]
+    });
+  }
+  getData() {
+    let that = this;
+    fetch(`http://localhost:3001/user`)
+      .then(function(response) {
+        if (response.status !== 200) {
+          console.log("Hay un error " + response.status);
+          return;
+        }
+        response.json().then(function(data) {
+          that.setUsers(data);
+        });
+      })
+      .catch(function(err) {
+        console.log("Fetch Error :-S", err);
+      });
+  }
 
-  handleChange(event) {
-    this.setState({ value: event.target.value });
+  componentWillMount() {
+    this.getData();
+  }
+
+  emailChange(event) {
+    this.setState({
+      email: event.target.value
+    });
+  }
+  passwordChange(event) {
+    this.setState({
+      password: event.target.value
+    });
   }
 
   handleSubmit(event) {
-    alert("A name was submitted: " + this.state.value);
     event.preventDefault();
+    const mail = this.state.email;
+    const pass = this.state.password;
+    // if (mail === users.user.email)
   }
   render() {
     const { classes } = this.props;
     return (
       <form onSubmit={this.handleSubmit} className={classes.loginForm}>
         <TextField
-          label="Your name"
-          id="mui-theme-provider-standard-input"
-          value={this.state.value}
-          onChange={this.handleChange}
+          label="Tu email"
+          id="email"
+          value={this.state.email}
+          onChange={this.emailChange}
         />
         <TextField
-          label="Your password"
-          id="mui-theme-provider-standard-input"
-          value={this.state.value}
-          onChange={this.handleChange}
+          label="Tu contraseña"
+          id="password"
+          value={this.state.password}
+          onChange={this.passwordChange}
           className={classes.flexItem}
         />
 
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" type="submit">
           Log in
         </Button>
       </form>

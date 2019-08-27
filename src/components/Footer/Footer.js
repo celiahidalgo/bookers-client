@@ -12,7 +12,9 @@ const styles = theme => ({
     position: "fixed",
     bottom: 0,
     left: 0,
-    width: "100%"
+    width: "100%",
+    minHeight: "40px",
+    backgroundColor: "white"
   },
   smallerText: {
     fontSize: "10px",
