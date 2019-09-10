@@ -1,5 +1,4 @@
 import { GET_BOOKS } from "../actions/books-actions";
-import { ADD_FAVORITE } from "../actions/books-actions";
 
 const initialState = {
 };
@@ -10,12 +9,9 @@ const booksReducer = (prevState = initialState, action) => {
       return {
         ...prevState,
         books: action.payload.data.allBooks.books
+
       };
-    case ADD_FAVORITE:
-      return {
-        ...prevState,
-        books: [{ favorite: true }]
-      };
+
 
     default:
       return prevState;

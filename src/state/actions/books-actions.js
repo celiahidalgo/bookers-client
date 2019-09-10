@@ -7,11 +7,3 @@ export const getBooks = data => {
     }
   };
 };
-
-export const ADD_FAVORITE = "ADD_FAVORITE";
-export const actionFav = data => ({
-  type: ADD_FAVORITE,
-  payload: {
-    data
-  }
-});

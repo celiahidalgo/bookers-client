@@ -1,13 +1,15 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import booksReducer from "./reducers/books-reducer";
+import userReducer from "./reducers/user-reducer";
 // import { createEpicMiddleware } from "redux-observable";
 // import combinedEpics from "./epics";
 import thunk from "redux-thunk";
 import logger from "redux-logger";
 
 const reducers = combineReducers({
-  books: booksReducer
+  books: booksReducer,
+  user: userReducer
 });
 
 // const epicMiddleware = createEpicMiddleware();

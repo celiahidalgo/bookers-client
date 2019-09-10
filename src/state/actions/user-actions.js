@@ -1,15 +1,32 @@
-export const POST_USER = "POST_USER";
 export const GET_USER = "GET_USER";
-export const getUser = (user, logged) => {
+export const getUser = (data) => {
   return {
-    type: POST_USER,
-    payload: {
-      user
-    },
     type: GET_USER,
     payload: {
-      user,
-      status: logged
-    }
+      data
+    },
+
   };
 };
+export const ADD_FAVORITE = "ADD_FAVORITE";
+export const actionFav = data => ({
+  type: ADD_FAVORITE,
+  payload: {
+    data
+  }
+});
+export const DELETE_FAVORITE = "DELETE_FAVORITE";
+export const deleteFav = data => ({
+  type: DELETE_FAVORITE,
+  payload: {
+    data
+  }
+});
+
+export const GET_FAVORITE = "GET_FAVORITE";
+export const getFav = data => ({
+  type: ADD_FAVORITE,
+  payload: {
+    data
+  }
+});

@@ -61,7 +61,7 @@ export class Signup extends React.Component {
     const name = this.state.username;
     const mail = this.state.email;
     const pass = this.state.password;
-    fetch("http://localhost:3001/signup", {
+    fetch("http://localhost:3001/user/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

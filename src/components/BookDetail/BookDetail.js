@@ -13,16 +13,12 @@ import Typography from "@material-ui/core/Typography";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import ShareIcon from "@material-ui/icons/Share";
 import TextField from "@material-ui/core/TextField";
-import Modal from '@material-ui/core/Modal';
-import Button from "@material-ui/core/Button";
 
 import { connect } from "react-redux";
 
 import { getBooks } from "../../state/actions/books-actions";
 import { actionFav } from "../../state/actions/user-actions";
 import { getFav } from "../../state/actions/user-actions";
-import BookDetail from "../BookDetail";
-
 
 
 const _ = require('lodash');
@@ -36,11 +32,10 @@ const SearchForm = withStyles({
   },
 })(Grid);
 
-class Books extends React.Component {
+class BookDetail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openBook: false,
       search: "",
       allBooks: this.props.books
     }
@@ -48,21 +43,10 @@ class Books extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleOpen() {
-    console.log(this)
-    this.setState({ openBook: true });
-  };
-
-  handleClose() {
-    this.setState({ openBook: false });
-  };
-
-
   componentWillMount() {
+    console.log(this.props.books)
     this.getBooks();
   }
-
-
   bookChange(event) {
     this.setState({
       search: event.target.value
@@ -110,7 +94,7 @@ class Books extends React.Component {
       method: "GET",
     });
     const data = await updatedFavs.json();
-    console.log(data)
+    // console.log(data)
 
     this.props.actionFav(data)
 
@@ -118,44 +102,12 @@ class Books extends React.Component {
 
 
   render() {
-    console.log("lets see" + JSON.stringify(this.props.favorites));
-    // const { classes } = this.props;
 
-    function rand() {
-      return Math.round(Math.random() * 20) - 10;
-    }
-
-    function getModalStyle() {
-      const top = 50 + rand();
-      const left = 50 + rand();
-
-      return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-      };
-    }
-
-
-    const isItemFav = true
-    // false
     return (
       // <div className={classes.root}>
 
 
       < Grid container >
-        <SearchForm >
-          <form onSubmit={this.handleSubmit}>
-            <TextField
-              label="Busca tu libro favorito"
-              id="book"
-              value={this.state.search || ""}
-              onChange={this.bookChange}
-              name="book"
-              type="text"
-            />
-          </form>
-        </SearchForm>
 
         {
           this.state.allBooks &&
@@ -164,17 +116,6 @@ class Books extends React.Component {
             <Grid key={index} item xs={4}>
 
               <Card >
-                <Button onClick={this.handleOpen.bind(this)}>Open Modal</Button>
-                <Modal
-                  aria-labelledby="simple-modal-title"
-                  aria-describedby="simple-modal-description"
-                  open={this.state.openBook}
-                  onClose={this.handleClose.bind(this)}
-                >
-                  <div style={getModalStyle()} >
-                    <BookDetail />
-                  </div>
-                </Modal>
                 <CardHeader
                   action={<IconButton aria-label="settings" />}
                   title={book.title}
@@ -248,7 +189,7 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Books);
+)(BookDetail);
 // export default compose(
 //   withStyles(styles),
 //   connect(mapStateToProps, mapDispatchToProps)
