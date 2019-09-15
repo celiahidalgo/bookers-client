@@ -1,4 +1,4 @@
-import { GET_BOOKS } from "../actions/books-actions";
+import { GET_BOOKS, GET_FILTERED_BOOKS } from "../actions/books-actions";
 
 const initialState = {
 };
@@ -8,10 +8,22 @@ const booksReducer = (prevState = initialState, action) => {
     case GET_BOOKS:
       return {
         ...prevState,
-        books: action.payload.data.allBooks.books
+        books: action.data.books.books
 
       };
+    // case RECEIVE_BOOKS:
+    // return {
+    //   ...prevState,
+    //   // books: action.data.books.books,
+    //   books: JSON.data.children.map(child => child.data)
 
+    // };
+    case GET_FILTERED_BOOKS:
+      return {
+        ...prevState,
+        books: action.data.books.books
+
+      };
 
     default:
       return prevState;

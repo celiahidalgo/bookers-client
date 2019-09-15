@@ -20,16 +20,14 @@ const styles = () => ({
 class Signin extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { email: "", password: "", loggedIn: false };
+    this.state = { email: "", password: "", id: "", loggedIn: false };
     this.emailChange = this.emailChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   setUsers(users) {
-    console.log(users);
     this.setState({
       users: users.user,
-      // loggedIn: false
     });
   }
   getData() {
@@ -53,68 +51,65 @@ class Signin extends React.Component {
     this.getData();
   }
 
-  emailChange(event) {
+  emailChange(e) {
     this.setState({
-      email: event.target.value
+      email: e.target.value
     });
   }
-  passwordChange(event) {
+  passwordChange(e) {
     this.setState({
-      password: event.target.value
+      password: e.target.value
     });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  async handleSubmit(e) {
+    e.preventDefault(e);
     const mail = this.state.email;
     const pass = this.state.password;
-
-    // const user = (JSON.stringify(this.state.users.find(user => user.email === mail && user.password === pass)))
-    // console.log(user.username)
-    if (this.state.users.find(user => user.email === mail && user.password === pass)) {
-      this.setState({
-        loggedIn: true
-      });
-      return <Redirect to='http://localhost:3000/Home' />
+    const user = this.state.users.find(user => user.email === mail && user.password === pass)
+    if (!user) {
+      alert(`Tu email o contraseña son incorrectos, vuelve a intentarlo`);
+      window.location = "http://localhost:3000";
     }
-    else alert(`Tu email o contraseña son incorrectos, vuelve a intentarlo`);
-    window.location = "http://localhost:3000";
+
+    this.setState({
+      loggedIn: true,
+      id: user._id
+    })
+    console.log(this.state)
+
+
   }
-  //   this.state.users.find(user => user.email === mail && user.password === pass) ? return <Redirect to='/target' /> : alert(`Tu email o contraseña son incorrectos, vuelve a intentarlo`);
-  //   window.location = "http://localhost:3000";
-  // }
-  // if (mail === user.email) {
-  //   console.log("hey")
-  // }
-  // else return console.log("hoy")
-  // }
+
   render() {
     const { classes } = this.props;
     if (this.state.loggedIn === true) {
-      const id = this.state.user[2];
-      console.log(id)
-    }
-    else return (
-      <form onSubmit={this.handleSubmit} className={classes.loginForm}>
-        <TextField
-          label="Tu email"
-          id="email"
-          value={this.state.email}
-          onChange={this.emailChange}
-        />
-        <TextField
-          label="Tu contraseña"
-          id="password"
-          value={this.state.password}
-          onChange={this.passwordChange}
-          className={classes.flexItem}
-        />
+      const id = this.state.id
+      return <Redirect to={`/Home?id=${id}&`} />
 
-        <Button variant="contained" color="primary" type="submit">
-          Log in
+    }
+    else
+      return (
+        <form onSubmit={(e) => this.handleSubmit(e)} className={classes.loginForm}>
+          <TextField
+            label="Tu email"
+            id="email"
+            value={this.state.email}
+            onChange={this.emailChange}
+          />
+          <TextField
+            label="Tu contraseña"
+            id="password"
+            value={this.state.password}
+            onChange={this.passwordChange}
+            className={classes.flexItem}
+          />
+
+          <Button variant="contained" color="primary" type="submit">
+            Log in
         </Button>
-      </form>
-    );
+        </form>
+      );
   }
 }
 

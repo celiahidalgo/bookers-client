@@ -1,196 +1,112 @@
-
 import React from "react";
 import { withStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 
 import Grid from "@material-ui/core/Grid";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import TextField from "@material-ui/core/TextField";
+import Modal from "@material-ui/core/Modal";
 
-import { connect } from "react-redux";
-
-import { getBooks } from "../../state/actions/books-actions";
-import { actionFav } from "../../state/actions/user-actions";
-import { getFav } from "../../state/actions/user-actions";
+import SeeIcon from '@material-ui/icons/RemoveRedEyeOutlined';
 
 
-const _ = require('lodash');
-
-const SearchForm = withStyles({
-  root: {
+const styles = theme => ({
+  modal: {
+    position: 'absolute',
+    width: "75vw",
+    top: "15vw",
+    left: "8vw",
+    backgroundColor: "white",
+    padding: "2em",
     display: "flex",
-    placeContent: "space-evenly",
-    width: "100%",
-    margin: "3rem 1rem"
+    flexDirection: "row",
+    maxHeight: "400px",
+    overflowY: "scroll"
+
   },
-})(Grid);
+  bookImg: {
+    padding: "1em",
+    height: "200px",
+    objectFit: "cover"
+  },
+  detailFooter: {
+    backgroundColor: "#f2f2f2",
+    padding: ".5em 1em",
+    borderRadius: "20px",
+    color: "grey",
+    fontSize: ".9em",
+    marginBottom: "20px"
+  }
+});
 
 class BookDetail extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
-      search: "",
-      allBooks: this.props.books
+      openBook: false,
+      title: "",
+      description: "",
+      author: "",
+      publishedOn: "",
+      image: ""
     }
-    this.bookChange = this.bookChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentWillMount() {
-    console.log(this.props.books)
-    this.getBooks();
-  }
-  bookChange(event) {
-    this.setState({
-      search: event.target.value
-    });
-  }
-  handleSubmit(e) {
-    e.preventDefault();
-    const search = this.state.search;
-
-    fetch(`http://localhost:3001/books?q=${search}`, {
-      method: "GET"
-    });
-    let newBooks = _.filter(this.props.books, book => book.title.includes(this.state.search.toLowerCase()))
-    this.setState({
-      allBooks: newBooks
-    });
-  }
-  async getBooks() {
-    const req = await fetch("http://localhost:3001/books", {
+  async handleOpen() {
+    const req = await fetch(`http://localhost:3001/books/${this.props.id}`, {
       method: "GET"
     });
     const data = await req.json();
     console.log(data)
-    this.props.getBooks(data);
-    this.setState({
-      allBooks: this.props.books
-    })
-  }
 
-  async doFav(e) {
-    e.preventDefault();
-    const clickedBook = e.target.value
-    console.log(clickedBook)
-    const urlParams = new URLSearchParams(window.top.location.search);
-    const id = urlParams.get("id");
-    const req = await fetch(`http://localhost:3001/user/${id}/favs`, {
-      method: "PUT",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      },
-      body: JSON.stringify({ "favorites": e.target.value })
+    await this.setState({
+      openBook: true,
+      title: data.book.title || "",
+      description: data.book.description || "",
+      author: data.book.author || "",
+      publishedOn: data.book.publishedOn || "",
+      image: (data.book.image.thumbnail) || "",
     });
+    console.log(data.book.image.thumbnail)
+  };
 
-    const updatedFavs = await fetch(`http://localhost:3001/user/${id}/favs`, {
-      method: "GET",
-    });
-    const data = await updatedFavs.json();
-    // console.log(data)
-
-    this.props.actionFav(data)
-
-  }
-
+  handleClose() {
+    this.setState({ openBook: false });
+  };
 
   render() {
-
-    return (
-      // <div className={classes.root}>
-
-
-      < Grid container >
-
-        {
-          this.state.allBooks &&
-          this.state.allBooks.map((book, index) => (
-
-            <Grid key={index} item xs={4}>
-
-              <Card >
-                <CardHeader
-                  action={<IconButton aria-label="settings" />}
-                  title={book.title}
-                  subheader={book.publishedOn}
-                />
-                {/* <CardMedia
-                  className={classes.media}
-                  image={book.image}
-                  title="Paella dish"
-                /> */}
-                <CardContent>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {book.description}
-                  </Typography>
-                </CardContent>
-                <CardActions disableSpacing>
-
-                  <IconButton
-                    aria-label="add to favorites"
-                    onClick={this.doFav.bind(this)}
-                    value={book._id}
-                    id={book._id}
-
-
-                  >
-                    {this.props.favorites.find(fav => fav === book._id) ? <FavoriteIcon color="primary" /> : <FavoriteIcon />}
-                    {/* {itemFav === true && */}
-                    {/* <FavoriteIcon color="primary"/> */}
-                    {/* } */}
-                    {/* {itemFav === false &&
-                      <FavoriteIcon
-
-                      /> */}
-                    {/* } */}
-
-
-
-                  </IconButton>
-                  <IconButton aria-label="share">
-                    <ShareIcon />
-                  </IconButton>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))
-        }
-      </Grid >
-      // </div>
-    );
+    const { classes } = this.props;
+    return (<div>
+      <IconButton type="button" onClick={this.handleOpen.bind(this)}>
+        <SeeIcon />
+      </IconButton>
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.openBook}
+        onClose={this.handleClose.bind(this)}
+      >
+        {/* style={modalStyle()} */}
+        <Grid className={classes.modal}>
+          <img className={classes.bookImg} alt={this.state.title} src={this.state.image} />
+          <div>
+            <h2 id="simple-modal-title">{this.state.title}</h2>
+            <p >
+              {this.state.description}
+            </p>
+            <div className={classes.detailFooter}>
+              <p >
+                {this.state.author}
+              </p>
+              <p >
+                {this.state.publishedOn}
+              </p>
+            </div>
+          </div>
+        </Grid>
+      </Modal>
+    </div>)
   }
 }
-const mapStateToProps = store => ({
-  books: store.books.books,
-  favorites: store.user.favorites
-});
 
-const mapDispatchToProps = dispatch => ({
-  getBooks: allBooks => dispatch(getBooks({ allBooks })),
-  actionFav: user => dispatch(actionFav({ user })),
-  getFav: user => dispatch(getFav({ user }))
-});
-// export default connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(withStyles(styles)(Books));
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BookDetail);
-// export default compose(
-//   withStyles(styles),
-//   connect(mapStateToProps, mapDispatchToProps)
-// )(Books)
+export default withStyles(styles)(BookDetail);

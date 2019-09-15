@@ -25,7 +25,7 @@ export const deleteFav = data => ({
 
 export const GET_FAVORITE = "GET_FAVORITE";
 export const getFav = data => ({
-  type: ADD_FAVORITE,
+  type: GET_FAVORITE,
   payload: {
     data
   }

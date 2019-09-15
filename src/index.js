@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import store from "./state/store";
 import * as serviceWorker from "./serviceWorker";
 
+
 const App = () => (
   <Provider store={store}>
     <Main />
